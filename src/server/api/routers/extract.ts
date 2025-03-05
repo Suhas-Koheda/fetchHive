@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { publicProcedure } from '@/server/api/trpc';

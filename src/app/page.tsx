@@ -18,10 +18,10 @@ export default async function Home() {
         <Navbar/>
         <SpotlightComponent/>
         <LampComponent/>
+        <CompareComponent/>
         <ToolTipComponent/>
         <MarqueeComponent/>
         <FlowingMenuComponent/>
-        <CompareComponent/>
       </main>
     </HydrateClient>
   );

@@ -4,19 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { Menu, X, Zap } from 'lucide-react';
+import Link from "next/link"
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
-        };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     const navItems = [
         { label: 'Features', href: '#features' },
@@ -32,7 +25,7 @@ export default function Navbar() {
         <nav
             className={`
                 fixed top-0 left-0 right-0 z-50 h-[50px] 
-                ${isScrolled ? 'bg-[#030617]/80 backdrop-blur-md shadow-lg' : 'bg-[#030617]'}
+                bg-transparent
                 transition-all duration-300 ease-in-out
             `}
         >
@@ -66,14 +59,16 @@ export default function Navbar() {
                     ))}
                     <div className="flex items-center space-x-4">
                         <a
-                            href="/login"
+                            href="/sign-in"
                             className="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium"
                         >
                             Log In
                         </a>
-                        <ShimmerButton className="shadow-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2 rounded-lg">
-                            <span className="text-sm font-medium text-white">Sign Up</span>
-                        </ShimmerButton>
+                        <Link href='/sign-up'>
+                            <ShimmerButton className="shadow-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2 rounded-lg">
+                              <span className="text-sm font-medium text-white">Sign Up</span>
+                            </ShimmerButton>
+                        </Link>
                     </div>
                 </motion.div>
 

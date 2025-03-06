@@ -107,6 +107,7 @@ export const SignUpForm = () => {
 								onChange={(e) => setPassword(e.target.value)}
 								autoComplete="new-password"
 								placeholder="Password"
+								type="password"
 							/>
 						</div>
 						<div className="grid gap-2">

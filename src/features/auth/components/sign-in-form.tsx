@@ -9,11 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Navbar from "@/features/home/ui/navbar/navbar";
 import { Label } from "@/components/ui/label";
 import { authClient as client } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { BackgroundLines } from "@/components/ui/background-lines";
 
 export const LogInForm = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +23,10 @@ export const LogInForm = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   return (
-    <Card className="z-50 rounded-md rounded-t-none max-w-md">
+    <BackgroundLines>
+    <div className="grid dark bg-black place-items-center h-[100vh]">
+      <Navbar />
+      <Card className="z-50 rounded-md rounded-t-none max-w-md">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
         <CardDescription className="text-xs md:text-sm">
@@ -116,11 +121,13 @@ export const LogInForm = () => {
       </CardContent>
       <CardFooter>
         <div className="flex justify-center w-full border-t py-4">
-          <p className="text-center text-xs text-neutral-500">
-            Secured by <span className="text-orange-400">better-auth.</span>
+          <p className="text-center text-xs font-bold text-neutral-500">
+            <a className="underline text-blue-400 mr-2" href="/sign-up">Sign Up</a>Instead
           </p>
         </div>
       </CardFooter>
     </Card>
+  </div>
+  </BackgroundLines>
   );
 }

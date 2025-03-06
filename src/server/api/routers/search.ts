@@ -88,6 +88,8 @@ export const searchWeb = publicProcedure
                 });
             }
 
+            console.log("Search Results", data);
+
             return {
                 success: true,
                 searchResults: {

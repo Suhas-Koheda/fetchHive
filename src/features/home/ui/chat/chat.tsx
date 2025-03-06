@@ -299,20 +299,7 @@ useEffect(() => {
             >
               {index + 1}
             </div>
-            <span className="mt-2 text-sm">{step.label}</span>
-            {index < steps.length - 1 && (
-              <div className="absolute left-0 h-1 w-full" style={{ 
-                top: "1.25rem",
-                left: `${(index + 1) * (100 / steps.length)}%`,
-                width: `${100 / steps.length}%`
-              }}>
-                <div className={`h-full ${
-                  index < steps.findIndex(s => s.key === currentStep)
-                    ? "bg-green-500"
-                    : "bg-gray-300"
-                }`}></div>
-              </div>
-            )}
+            
           </div>
         ))}
       </div>
@@ -381,7 +368,7 @@ useEffect(() => {
             <SidebarTrigger />
           </div>
 
-          <AuroraBackground className="z-0 min-h-screen bg-black text-white">
+          <AuroraBackground className="z-0 overflow-hidden min-h-screen bg-black text-white">
             {!chatStart ? (
               <div className="z-10 mx-auto flex max-w-4xl flex-col p-4 pt-16 md:p-8 md:pt-8">
                 <h1 className="mb-12 text-3xl font-light opacity-50">What can Fetch Hive help you with today?</h1>
@@ -425,7 +412,6 @@ useEffect(() => {
               </div>
             ) : (
               <div className="z-10 mx-auto flex max-w-6xl flex-col p-6">
-                <h1 className="mb-4 text-2xl font-bold">Generating API: {query}</h1>
                 
                 {getStepIndicator()}
                 
@@ -437,7 +423,7 @@ useEffect(() => {
                 )}
                 
                 {/* Workflow Stages */}
-                <div className="space-y-8">
+                <div className="">
                   {/* Stage 1: Schema Generation */}
                   {currentStep === WorkflowStep.SchemaGeneration && generateSchemaMutation.isPending && (
                     <div className="flex flex-col items-center justify-center space-y-4 p-12">
@@ -492,7 +478,7 @@ useEffect(() => {
                   
                   {/* Navigation Controls */}
                   {currentStep !== WorkflowStep.Idle && (
-                    <div className="flex justify-between pt-6">
+                    <div className="flex flex-col space-y-2 items-center pt-6">
                       <button
                         onClick={() => {
                           setChatStart(false);
@@ -503,7 +489,7 @@ useEffect(() => {
                           setDeploymentData(null);
                           setWorkflowError(null);
                         }}
-                        className="px-4 py-2 rounded-md bg-gray-700 text-white hover:bg-gray-600"
+                        className="px-4 py-2 rounded-md bg-gray-700  text-white flex justify-center hover:bg-gray-600"
                       >
                         Start Over
                       </button>

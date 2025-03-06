@@ -1,7 +1,6 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 import { pgTable, text, timestamp, boolean, index, pgTableCreator } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
 
 /**

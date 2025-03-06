@@ -17,7 +17,9 @@ export const env = createEnv({
     DEEPSEEK_API_KEY: z.string(),
     OPENAI_API_KEY: z.string(),
     FIRECRAWL_API_KEY: z.string(),
-    SERPER_API_KEY: z.string()
+    SERPER_API_KEY: z.string(),
+    UPSTASH_REDIS_REST_URL: z.string().url(),
+    UPSTASH_REDIS_REST_TOKEN: z.string(),
   },
 
   /**
@@ -44,7 +46,9 @@ export const env = createEnv({
     DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     FIRECRAWL_API_KEY: process.env.FIRECRAWL_API_KEY,
-    SERPER_API_KEY: process.env.SERPER_API_KEY
+    SERPER_API_KEY: process.env.SERPER_API_KEY,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

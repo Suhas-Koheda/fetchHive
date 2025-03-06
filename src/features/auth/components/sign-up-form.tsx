@@ -56,7 +56,7 @@ export const SignUpForm = () => {
 	return (
 		<BackgroundLines className="">
 			<Navbar />
-		<div className="grid dark bg-black place-items-center h-[100vh]">
+		<div className="grid dark bg-black place-items-center h-fit">
 			<Card className="z-50 rounded-xl max-w-md mt-12">
 				<CardHeader>
 					<CardTitle className="text-lg md:text-xl">Sign Up</CardTitle>
@@ -107,6 +107,7 @@ export const SignUpForm = () => {
 								onChange={(e) => setPassword(e.target.value)}
 								autoComplete="new-password"
 								placeholder="Password"
+								type="password"
 							/>
 						</div>
 						<div className="grid gap-2">
@@ -118,39 +119,6 @@ export const SignUpForm = () => {
 								autoComplete="new-password"
 								placeholder="Confirm Password"
 							/>
-						</div>
-						<div className="grid gap-2">
-							<Label htmlFor="image">Profile Image (optional)</Label>
-							<div className="flex items-end gap-4">
-								{imagePreview && (
-									<div className="relative w-16 h-16 rounded-sm overflow-hidden">
-										<Image
-											src={imagePreview}
-											alt="Profile preview"
-											layout="fill"
-											objectFit="cover"
-										/>
-									</div>
-								)}
-								<div className="flex items-center gap-2 w-full">
-									<Input
-										id="image"
-										type="file"
-										accept="image/*"
-										onChange={handleImageChange}
-										className="w-full"
-									/>
-									{imagePreview && (
-										<X
-											className="cursor-pointer"
-											onClick={() => {
-												setImage(null);
-												setImagePreview(null);
-											}}
-										/>
-									)}
-								</div>
-							</div>
 						</div>
 						<Button
 							type="submit"

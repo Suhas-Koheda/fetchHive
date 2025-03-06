@@ -55,6 +55,7 @@ export const LogInForm = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="password"
                     placeholder="Password"
+                    type="password"
                 />
             </div>
             <Button

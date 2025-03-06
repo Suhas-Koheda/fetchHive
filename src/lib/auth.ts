@@ -32,4 +32,3 @@ export const getSession = cache(async () => {
         headers: await headers()
     })
 })
-        

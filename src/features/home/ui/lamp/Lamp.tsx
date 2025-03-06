@@ -12,7 +12,7 @@ export default function Lamp() {
                         initial={{opacity: 0, y: 20}}
                         animate={{opacity: 1, y: 0}}
                         transition={{duration: 0.8}}
-                        className="text-5xl font-bold text-white text-center"
+                        className="text-5xl pt-8 font-bold text-white text-center"
                     >
                         Build APIs from Just a Prompt
                     </motion.h1>

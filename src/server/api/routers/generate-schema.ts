@@ -1,8 +1,7 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
-
-import { openAiGenerateSchema } from "@/actions/open-ai"
-import { geminiGenerateSchema } from "@/actions/gemini-ai"
+import { generateText } from "ai"
+import { google } from '@ai-sdk/google';
 
 import { protectedProcedure } from "@/server/api/trpc"
 
@@ -10,7 +9,6 @@ export const generateJsonSchema = protectedProcedure
     .input(
         z.object({
             query: z.string().min(1, "Description cannot be empty"),
-            provider: z.enum(["openai", "gemini"]).default("gemini"),
         }),
     )
     .output(
@@ -20,29 +18,34 @@ export const generateJsonSchema = protectedProcedure
     )
     .mutation(async ({ input }) => {
         try {
-            const { query, provider } = input
+            const prompt = `You are a JSON Schema generator. Given a description of data, generate a JSON Schema that matches the description. 
+            Follow these rules:
+            1. Use appropriate types (string, number, boolean, array, object)
+            2. Add required fields when they are essential
+            3. Use descriptive property names
+            4. Add descriptions for complex fields
+            5. Use proper JSON Schema format
+            6. Respond ONLY with the valid JSON Schema
+            7. Do not include any explanatory text before or after the JSON Schema
 
-            // Generate schema based on provider
-            let text: string;
-            try {
-                text = await (provider === "openai" 
-                    ? openAiGenerateSchema(query)
-                    : geminiGenerateSchema(query)
-                );
-                
-                if (!text) {
-                    throw new TRPCError({
-                        code: "INTERNAL_SERVER_ERROR",
-                        message: `No response received from ${provider}`,
-                        cause: "Empty response"
-                    });
-                }
-            } catch (error) {
+            Data Description: ${input.query}`
+
+            // Using the Vercel AI SDK with Google's model
+            const { text } = await generateText({
+                model: google('gemini-1.5-flash'),
+                prompt: prompt,
+                temperature: 0.2, // Lower temperature for more deterministic output
+                maxTokens: 1000,
+
+            })
+
+            if (!text) {
+                console.log("Failed to generate schema")
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: `Failed to generate schema with ${provider}`,
-                    cause: error
-                });
+                    message: "Failed to generate JSON schema",
+                    cause: text,
+                })
             }
 
             // Remove any markdown code block formatting if present
@@ -52,35 +55,23 @@ export const generateJsonSchema = protectedProcedure
                 .trim()
 
             if (!cleanSchemaStr) {
+                console.log("Failed to generate schema")
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: `Failed to generate schema using ${provider}`,
-                    cause: "Empty response from AI",
+                    message: "Failed to generate JSON schema",
+                    cause: text,
                 })
             }
 
-            try {
-                // Parse the schema to ensure it's valid
-                const schema = JSON.parse(cleanSchemaStr)
-                return { schema }
-            } catch (parseError) {
-                throw new TRPCError({
-                    code: "BAD_REQUEST",
-                    message: "Invalid JSON schema generated",
-                    cause: parseError,
-                })
-            }
+            // Parse the schema to ensure it's valid
+            const schema = JSON.parse(cleanSchemaStr)
 
+            return { schema }
         } catch (error) {
-            console.error(`Error generating schema with ${input.provider}:`, error)
-            
-            if (error instanceof TRPCError) {
-                throw error
-            }
-
+            console.error("Error generating schema:", error)
             throw new TRPCError({
                 code: "INTERNAL_SERVER_ERROR",
-                message: `Failed to generate schema using ${input.provider}`,
+                message: "Failed to generate JSON schema",
                 cause: error,
             })
         }

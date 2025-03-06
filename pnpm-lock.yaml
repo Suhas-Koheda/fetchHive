@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ai-sdk/azure':
+        specifier: ^1.2.1
+        version: 1.2.1(zod@3.24.2)
       '@ai-sdk/google':
         specifier: ^1.1.20
         version: 1.1.20(zod@3.24.2)
@@ -183,8 +186,20 @@ importers:
 
 packages:
 
+  '@ai-sdk/azure@1.2.1':
+    resolution: {integrity: sha512-nQU5k5HCAY7W1qr7mNwy0fVYX14ysDGtqEMDeWp5IMjdhbUhG3RU9ZEj0UhdupSa6B+Wuh7obrRrmGOM6dJNww==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
+
   '@ai-sdk/google@1.1.20':
     resolution: {integrity: sha512-vsYtmFYy5vQAovWWAqb9XoLZ01lmcfpfxviY8lMV92YwwbLLhYcaPQ4dKaaKo0tSksCWsO2Qehw8bN3eBxmZdA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
+
+  '@ai-sdk/openai@1.2.1':
+    resolution: {integrity: sha512-UtVDNrmrKzb3b4T9bnpduXs4FKpWGn+sH5qaFP1mtxOPeYGUF9OoJfGilH3CNfqGAE4QdZh/LT3IV6GHacooGg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -3643,7 +3658,20 @@ packages:
 
 snapshots:
 
+  '@ai-sdk/azure@1.2.1(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/openai': 1.2.1(zod@3.24.2)
+      '@ai-sdk/provider': 1.0.10
+      '@ai-sdk/provider-utils': 2.1.11(zod@3.24.2)
+      zod: 3.24.2
+
   '@ai-sdk/google@1.1.20(zod@3.24.2)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.10
+      '@ai-sdk/provider-utils': 2.1.11(zod@3.24.2)
+      zod: 3.24.2
+
+  '@ai-sdk/openai@1.2.1(zod@3.24.2)':
     dependencies:
       '@ai-sdk/provider': 1.0.10
       '@ai-sdk/provider-utils': 2.1.11(zod@3.24.2)

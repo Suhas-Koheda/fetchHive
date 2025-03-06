@@ -28,12 +28,12 @@ export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
-        async function getUserSession() {
-            const { data } = await authClient.getSession();
-            setUserData(data);
-        }
-        getUserSession();
-    });
+      authClient.getSession()
+          .then(({ data }) => setUserData(data))
+          .catch(error => console.error("Failed to fetch user session:", error));
+  }, []);
+  
+  
 
     const navItems = [
         { label: 'Chat', href: 'chat' },

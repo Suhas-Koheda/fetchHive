@@ -31,40 +31,75 @@ const deployRequestSchema = z.object({
 });
 
 export const deployRouter = publicProcedure
-  .input(deployRequestSchema)
+  .input(
+    z.object({
+      userId: z.string().min(1, "User ID is required"),
+      schema: z.record(z.any()).nullable(),
+      extractedData: z.record(z.any()).nullable(),
+      name: z.string().min(1, "API name is required"),
+      query: z.string().min(1, "Query is required"),
+      urls: z.array(z.string()).min(1, "At least one URL is required"),
+    }),
+  )
   .mutation(async ({ input }) => {
     try {
-      const { key, data, route } = input;
+      const { userId, schema, extractedData, name, query, urls } = input;
 
-      // Clean the route string
-      const cleanRoute = route
+      if (!schema || !extractedData) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Schema and extracted data are required",
+        });
+      }
+
+      // Clean the route name
+      const cleanRoute = name
         .toLowerCase()
         .replace(/[^a-z0-9-_]/g, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "")
         .trim();
 
-      // Check if route already exists
-      const existingRoute = await redis.get(`api/results/${cleanRoute}`);
+      // Check if route already exists for this user
+      const existingRoute = await redis.get(`api/results/${userId}/${cleanRoute}`);
       if (existingRoute) {
         throw new TRPCError({
           code: "CONFLICT",
-          message: "Route already exists",
+          message: "API endpoint with this name already exists",
         });
       }
 
-      // Store the data in Redis
-      await redis.set(`api/results/${cleanRoute}`, JSON.stringify(data));
+      // Prepare the data to store
+      const apiData = {
+        data: extractedData,
+        metadata: {
+          query,
+          schema,
+          sources: urls,
+          lastUpdated: new Date().toISOString(),
+        },
+        config: {
+          urls,
+          query,
+          schema,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+
+      // Store the data in Redis with userId in the key
+      await redis.set(`api/results/${userId}/${cleanRoute}`, JSON.stringify(apiData));
 
       const apiRoute = env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-      const fullUrl = `${apiRoute}/api/results/${cleanRoute}`;
+      const fullUrl = `${apiRoute}/api/results/${userId}/${cleanRoute}`;
 
       return {
         success: true,
         message: "API endpoint deployed successfully",
         route: cleanRoute,
         url: fullUrl,
-        curlCommand: `curl -X GET "${fullUrl}" \\\n  -H "Authorization: Bearer sk_w4964vzs5p" \\\n  -H "Content-Type: application/json"`,
+        curlCommand: `curl -X GET "${fullUrl}" \\\n  -H "Content-Type: application/json"`,
+        apiData,
       };
     } catch (error) {
       // Handle Redis connection errors

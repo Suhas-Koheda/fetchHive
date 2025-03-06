@@ -15,7 +15,7 @@ export const appRouter = createTRPCRouter({
     extract: extractWebData,
     search: searchWeb,
     generateSchema: generateJsonSchema,
-    chats: chatRouter,
+    chat: chatRouter,
     deploy: deployRouter
 });
 

@@ -6,6 +6,7 @@ import MarqueeComponent from "@/features/home/ui/marquee/Marquee";
 import FlowingMenuComponent from "@/features/home/ui/flowingmenu/FlowingMenuComponent";
 import CompareComponent from "@/features/home/ui/compare/CompareComponent";
 import Navbar from "@/features/home/ui/navbar/navbar";
+import { BackgroundLinesComponent } from "@/features/home/ui/bg/bgComponent";
 
 export default async function Home() {
   // const hello = await api.post.hello({ text: "from tRPC" });
@@ -21,6 +22,7 @@ export default async function Home() {
         <CompareComponent/>
         <ToolTipComponent/>
         <MarqueeComponent/>
+        <BackgroundLinesComponent/>
         <FlowingMenuComponent/>
       </main>
     </HydrateClient>

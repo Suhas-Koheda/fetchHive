@@ -51,7 +51,7 @@ export function DeployApi({ deploymentData }: { deploymentData: DeployResult }) 
 
   if (!deploymentData?.success) {
     return (
-      <Card className="bg-red-500/10 border border-red-500/50">
+      <Card className="bg-red-500/10 border border-red-500/50 h-32">
         <CardHeader>
           <CardTitle className="text-red-500">Deployment Failed</CardTitle>
         </CardHeader>

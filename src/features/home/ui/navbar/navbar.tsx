@@ -49,19 +49,20 @@ export default function Navbar() {
 
     return (
         <div className="flex w-full flex-col">
-            <nav className="fixed left-0 right-0 top-0 z-50 bg-[#030617]/80 shadow-lg backdrop-blur-md transition-all duration-300 ease-in-out">
+            <nav className="fixed left-0 right-0 top-0 z-40 bg-[#030617]/80 shadow-lg backdrop-blur-md transition-all duration-300 ease-in-out">
                 <div className="container mx-auto flex items-center justify-between px-4 py-5">
                     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="flex items-center space-x-2">
                         <Zap size={24} className="text-indigo-400" />
-                        <span className="text-2xl font-bold text-white">FetchHive</span>
+                       <Link href={"/"} ><span className="text-2xl font-bold text-white">FetchHive</span></Link>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="hidden items-center space-x-8 md:flex">
-                        {navItems.map((item, index) => (
-                            <a key={index} href={item.href} className="text-sm font-medium text-gray-300 transition-colors duration-200 hover:text-white">
-                                {item.label}
-                            </a>
-                        ))}
+                    {userData && navItems.map((item, index) => (
+                                <a key={index} href={item.href} onClick={handleLinkClick} className="py-2 text-sm font-medium text-gray-300 transition-colors duration-200 hover:text-white">
+                                    {item.label}
+                                </a>
+                            ))}
+
                         <div className="flex items-center space-x-4">
                             {userData ? (
 
@@ -91,7 +92,7 @@ export default function Navbar() {
                 {isMenuOpen && (
                     <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} className="absolute left-0 right-0 top-full border-t border-gray-800 bg-[#030617] p-4 shadow-lg md:hidden">
                         <div className="flex flex-col space-y-4 py-2">
-                            {navItems.map((item, index) => (
+                        {userData && navItems.map((item, index) => (
                                 <a key={index} href={item.href} onClick={handleLinkClick} className="py-2 text-sm font-medium text-gray-300 transition-colors duration-200 hover:text-white">
                                     {item.label}
                                 </a>
@@ -103,10 +104,12 @@ export default function Navbar() {
                                     </button>
                                 ) : (
                                     <>
-                                        <a href="/login" onClick={handleLinkClick} className="block py-2 text-sm font-medium text-gray-300 transition-colors duration-200 hover:text-white">Log In</a>
+                                        <a href="/sign-in" onClick={handleLinkClick} className="block py-2 text-sm font-medium text-gray-300 transition-colors duration-200 hover:text-white">Log In</a>
+                                        <a href="/sign-up" onClick={handleLinkClick} className="block py-2 text-sm font-medium text-gray-300 transition-colors duration-200 hover:text-white">
                                         <ShimmerButton className="w-full rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 py-3 shadow-lg">
                                             <span className="text-sm font-medium text-white">Sign Up</span>
                                         </ShimmerButton>
+                                        </a>
                                     </>
                                 )}
                             </div>

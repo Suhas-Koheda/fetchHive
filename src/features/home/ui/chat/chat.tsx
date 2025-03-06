@@ -30,12 +30,15 @@ import { MessageSquare, Plus, Settings, User } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
+import { Stepper, StepperStep } from "./Stepper"; // Import the new Stepper component
 
 // Import step components
 import { SchemaGenerated } from "@/features/chat/components/schema-generated";
 import { SearchResults } from "@/features/chat/components/search-results";
 import { Extraction } from "@/features/chat/components/extraction";
 import { DeployApi } from "@/features/chat/components/deploy-api";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // Define output types from your router
 type RouterOutputs = inferRouterOutputs<AppRouter>;
@@ -89,6 +92,14 @@ export default function ApiWorkflowPage({ userId }: {
   // Error state
   const [workflowError, setWorkflowError] = useState<string | null>(null);
 
+  // Define stepper steps
+  const stepperSteps: StepperStep[] = [
+    { key: WorkflowStep.SchemaGeneration, label: "Schema Generation", description: "Creating data structure" },
+    { key: WorkflowStep.Search, label: "Search", description: "Finding data sources" },
+    { key: WorkflowStep.Extraction, label: "Data Extraction", description: "Processing data" },
+    { key: WorkflowStep.Deployment, label: "API Deployment", description: "Building endpoints" },
+  ];
+
   const placeholders = [
     "Generate an API for stock price data",
     "Create a weather API for my location",
@@ -97,31 +108,30 @@ export default function ApiWorkflowPage({ userId }: {
   ];
 
   // Fetch chat list
-  // Just fetch the data
-const chatListQuery = api.chat.list.useQuery({ userId });
+  const chatListQuery = api.chat.list.useQuery({ userId });
 
-// Handle the result with a useEffect
-useEffect(() => {
-  if (chatListQuery.data) {
-    if (chatListQuery.data.success && chatListQuery.data.endpoints) {
-      const formattedChats: ChatItem[] = chatListQuery.data.endpoints.map((endpoint, index) => ({
-        id: `${index}-${endpoint.endpoint}`,
-        endpoint: endpoint.endpoint,
-        name: endpoint.name,
-        query: endpoint.query,
-        lastUpdated: endpoint.lastUpdated,
-        url: endpoint.url
-      }));
-      setChats(formattedChats);
+  // Handle the result with a useEffect
+  useEffect(() => {
+    if (chatListQuery.data) {
+      if (chatListQuery.data.success && chatListQuery.data.endpoints) {
+        const formattedChats: ChatItem[] = chatListQuery.data.endpoints.map((endpoint, index) => ({
+          id: `${index}-${endpoint.endpoint}`,
+          endpoint: endpoint.endpoint,
+          name: endpoint.name,
+          query: endpoint.query,
+          lastUpdated: endpoint.lastUpdated,
+          url: endpoint.url
+        }));
+        setChats(formattedChats);
+      }
+      setIsLoadingChats(false);
     }
-    setIsLoadingChats(false);
-  }
-  
-  if (chatListQuery.error) {
-    console.error("Error fetching chats:", chatListQuery.error);
-    setIsLoadingChats(false);
-  }
-}, [chatListQuery.data, chatListQuery.error]);
+    
+    if (chatListQuery.error) {
+      console.error("Error fetching chats:", chatListQuery.error);
+      setIsLoadingChats(false);
+    }
+  }, [chatListQuery.data, chatListQuery.error]);
 
   // Set isClient to true after component mounts
   useEffect(() => {
@@ -209,12 +219,16 @@ useEffect(() => {
     }
   });
 
-  // Step 4: Deploy API mutation
+  // Step 4: Deploy API mutation - FIXED to maintain Deployment state
   const deployMutation = api.deploy.useMutation({
     onSuccess: (data) => {
       console.log("Deployment successful:", data);
       setDeploymentData(data);
-      setCurrentStep(WorkflowStep.Completed);
+      
+      // Add a delay to ensure the Deployment step is visible before completing
+      setTimeout(() => {
+        setCurrentStep(WorkflowStep.Completed);
+      }, 1500);
       
       // Refresh chat list after successful deployment
       void chatListQuery.refetch().catch(error => {
@@ -224,6 +238,7 @@ useEffect(() => {
     onError: (error) => {
       console.error("Deployment error:", error);
       setWorkflowError(`Deployment failed: ${error.message}`);
+      // Keep the current step as Deployment on error
     }
   });
 
@@ -274,38 +289,6 @@ useEffect(() => {
     }
   };
 
-  const getStepIndicator = () => {
-    const steps = [
-      { key: WorkflowStep.SchemaGeneration, label: "Schema Generation" },
-      { key: WorkflowStep.Search, label: "Search" },
-      { key: WorkflowStep.Extraction, label: "Data Extraction" },
-      { key: WorkflowStep.Deployment, label: "API Deployment" },
-    ];
-
-    return (
-      <div className="mb-6 flex w-full justify-between">
-        {steps.map((step, index) => (
-          <div key={step.key} className="flex flex-col items-center">
-            <div 
-              className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                currentStep === step.key
-                  ? "bg-blue-600 text-white"
-                  : currentStep === WorkflowStep.Idle
-                    ? "bg-gray-300 text-gray-600"
-                    : index < steps.findIndex(s => s.key === currentStep)
-                      ? "bg-green-500 text-white"
-                      : "bg-gray-300 text-gray-600"
-              }`}
-            >
-              {index + 1}
-            </div>
-            
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   // Only render the component content after client-side hydration
   if (!isClient) {
     return <div className="flex h-screen bg-black"></div>; // Simple loading state
@@ -313,9 +296,10 @@ useEffect(() => {
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-screen bg-[#16161d]">
+      <div className="flex h-screen bg-[#16161d] overflow-hidden w-screen">
         <Sidebar>
           <SidebarHeader>
+          <InteractiveHoverButton className="text-white"><Link href={"/"}>FetchHive</Link></InteractiveHoverButton>
             <SidebarMenuButton 
               size="lg" 
               onClick={handleNewChat}
@@ -326,7 +310,7 @@ useEffect(() => {
             </SidebarMenuButton>
           </SidebarHeader>
 
-          <SidebarContent>
+          <SidebarContent className="overflow-y-auto">
             <div className="px-2 py-1 text-xs font-medium text-gray-400">Recent APIs</div>
             <SidebarMenu>
               {isLoadingChats ? (
@@ -339,20 +323,19 @@ useEffect(() => {
                 </div>
               ) : (
                 chats.map((chat) => (
-                  <SidebarMenuItem key={chat.id}>
+                  <SidebarMenuItem key={chat.id} className="px-2">
                     <SidebarMenuButton
                       isActive={selectedChatId === chat.id}
                       onClick={() => handleSelectChat(chat.id)}
-                      className={`w-full justify-start px-4 py-3 transition-all duration-300 ${
+                      className={`w-full justify-start px-4 py-3 h-16 transition-all duration-300 ${
                         selectedChatId === chat.id 
                           ? "bg-gray-700" 
                           : "hover:bg-white hover:scale-[1.02]"
                       }`}
                     >
-                      <MessageSquare size={16} className="transition-transform duration-300 group-hover:scale-110" />
-                      <div className="flex flex-1 flex-col overflow-hidden">
+                      <MessageSquare size={16} className="transition-transform duration-300 group-hover:scale-110 mr-2 -ml-1" />
+                      <div className="flex flex-1 flex-col overflow-hidden overflow-y-visible justify-around h-full">
                         <span className="truncate">{chat.name}</span>
-                        <span className="text-xs text-gray-400 truncate">{chat.query}</span>
                         <span className="text-xs text-gray-400">{formatDate(chat.lastUpdated)}</span>
                       </div>
                     </SidebarMenuButton>
@@ -363,62 +346,69 @@ useEffect(() => {
           </SidebarContent>
         </Sidebar>
 
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 flex flex-col overflow-hidden w-full">
           <div className="fixed left-4 top-4 z-50 md:hidden">
             <SidebarTrigger />
           </div>
 
-          <AuroraBackground className="z-0 overflow-hidden min-h-screen bg-black text-white">
+          <AuroraBackground className="z-0 bg-black text-white flex-1 overflow-y-auto w-full">
             {!chatStart ? (
               <div className="z-10 mx-auto flex max-w-4xl flex-col p-4 pt-16 md:p-8 md:pt-8">
                 <h1 className="mb-12 text-3xl font-light opacity-50">What can Fetch Hive help you with today?</h1>
                 
-                  <PlaceholdersAndVanishInput
-                    onSubmit={handleSubmit}
-                    placeholders={placeholders}
-                    onChange={(e) => handleChange(e.target.value)}
-                  />
-                  
-                  <div className="mb-4 w-full flex items-center justify-between text-white">
-                    <div className="h-12 p-12 w-full rounded-b-xl bg-[#282828] font-bold items-center flex justify-between px-10 text-[#6687ae]">
-                      <div className="flex items-center">
-                        Choose Model
-                        <Select value={model} onValueChange={setModel}>
-                          <SelectTrigger className="mx-4 w-fit">
-                            <SelectValue placeholder="Gemini"/>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="gemini">Gemini</SelectItem>
-                              <SelectItem value="openAIo3">openAI-o3</SelectItem>
-                              <SelectItem value="deepseek">Deepseek r3</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <InteractiveHoverButton 
-                        type="submit"
-                        disabled={generateSchemaMutation.isPending}
-                        className="w-fit"
-                      >
-                        {generateSchemaMutation.isPending ? "Generating..." : "Generate API"}
-                      </InteractiveHoverButton>
+                <PlaceholdersAndVanishInput
+                  onSubmit={handleSubmit}
+                  placeholders={placeholders}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+                
+                <div className="mb-4 w-full flex items-center justify-between text-white">
+                  <div className="h-12 p-12 w-full rounded-b-xl bg-[#282828] font-bold items-center flex justify-between px-10 text-[#6687ae]">
+                    <div className="flex items-center">
+                      Choose Model
+                      <Select value={model} onValueChange={setModel}>
+                        <SelectTrigger className="mx-4 w-fit">
+                          <SelectValue placeholder="Gemini"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="gemini">Gemini</SelectItem>
+                            <SelectItem value="openAIo3">openAI-o3</SelectItem>
+                            <SelectItem value="deepseek">Deepseek r3</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </div>
+                    <InteractiveHoverButton 
+                      type="submit"
+                      disabled={generateSchemaMutation.isPending}
+                      className="w-fit"
+                    >
+                      {generateSchemaMutation.isPending ? "Generating..." : "Generate API"}
+                    </InteractiveHoverButton>
                   </div>
+                </div>
                 
                 {workflowError && (
-                  <div className="mb-4 text-red-500">{workflowError}</div>
+                  <div className="mb-4 text-red-500 bg-[#16171c]">{workflowError}</div>
                 )}
               </div>
             ) : (
-              <div className="z-10 mx-auto flex max-w-6xl flex-col p-6">
+              <div className="z-10 mx-auto flex flex-col p-6 min-h-full w-full py-16">
                 
-                {getStepIndicator()}
+                {/* Stepper component with properly tracked current step */}
+                <Stepper 
+                  steps={stepperSteps}
+                  currentStep={currentStep}
+                  className="mb-6"
+                />
                 
                 {workflowError && (
-                  <div className="mb-6 rounded-md bg-red-500/20 p-4 text-red-500">
+                  <div className="flex justify-center">
+                  <div className="mb-6 w-1/2 rounded-md bg-[#16171c] p-4 text-red-500">
                     <h3 className="font-semibold">Error</h3>
                     <p>{workflowError}</p>
+                  </div>
                   </div>
                 )}
                 
@@ -463,7 +453,7 @@ useEffect(() => {
                     <Extraction data={extractedData} />
                   )}
                   
-                  {/* Stage 4: Deployment */}
+                  {/* Stage 4: Deployment - FIXED to properly show deployment state */}
                   {currentStep === WorkflowStep.Deployment && deployMutation.isPending && (
                     <div className="flex flex-col items-center justify-center space-y-4 p-12">
                       <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
@@ -472,13 +462,25 @@ useEffect(() => {
                     </div>
                   )}
                   
+                  {/* Show deployment progress when in deployment step but not pending */}
+                  {currentStep === WorkflowStep.Deployment && !deployMutation.isPending && deploymentData && (
+                    <div className="flex flex-col items-center justify-center space-y-4 p-12">
+                      <div className="text-xl font-bold text-green-500">Deployment in progress!</div>
+                      <p className="text-lg">Setting up your API endpoints and documentation...</p>
+                      <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-blue-600 rounded-full animate-pulse" style={{ width: '75%' }}></div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Stage 5: Completed */}
                   {currentStep === WorkflowStep.Completed && deploymentData && (
                     <DeployApi deploymentData={deploymentData} />
                   )}
                   
                   {/* Navigation Controls */}
                   {currentStep !== WorkflowStep.Idle && (
-                    <div className="flex flex-col space-y-2 items-center pt-6">
+                    <div className="flex flex-col space-y-2 items-center pt-6 pb-8">
                       <button
                         onClick={() => {
                           setChatStart(false);
@@ -489,15 +491,19 @@ useEffect(() => {
                           setDeploymentData(null);
                           setWorkflowError(null);
                         }}
-                        className="px-4 py-2 rounded-md bg-gray-700  text-white flex justify-center hover:bg-gray-600"
+                        className="px-4 py-2 rounded-md bg-gray-700 text-white flex justify-center hover:bg-gray-600"
                       >
                         Start Over
                       </button>
                       
+                      {/* FIXED: Only show the Deploy API button when in Extraction step */}
                       {currentStep === WorkflowStep.Extraction && extractedData && (
                         <button
                           onClick={() => {
+                            // Set the current step to Deployment first
                             setCurrentStep(WorkflowStep.Deployment);
+                            
+                            // Then trigger the deploy mutation
                             deployMutation.mutate({
                               userId,
                               schema,

@@ -5,7 +5,7 @@ import {Compare} from "@/features/home/ui/compare/Compare";
 export function CompareComponent() {
     return (
         <div className="p-4 flex flex-col items-center bg-[#030617] dark:bg-neutral-900 dark:border-neutral-800 ">
-            <h2 className="text-2xl font-bold text-center mb-4 text-neutral-800 dark:text-white text-white heading">
+            <h2 className="text-2xl font-bold text-center mb-4 dark:text-white text-white heading">
                 What You Can Expect From Us
             </h2>
             <Compare
@@ -13,7 +13,7 @@ export function CompareComponent() {
                 secondImage="https://media.geeksforgeeks.org/wp-content/uploads/20240229152843/Screenshot-2024-02-29-152809.png"
                 firstImageClassName="object-cover object-left-top"
                 secondImageClassname="object-cover object-left-top"
-                className="h-[250px] md:h-[500px] md:w-[500px]"
+                className="h-[250px] md:h-[500px] w-[300px] md:w-[500px]"
                 slideMode="hover"
             />
         </div>

@@ -4,6 +4,7 @@ import {Spotlight} from "@/components/ui/spotlight";
 import {Cover} from "@/components/ui/cover";
 import {ShimmerButton} from "@/components/magicui/shimmer-button";
 import {ArrowRight, Play} from "lucide-react";
+import Link from "next/link";
 
 
 export function SpotlightClient() {
@@ -25,6 +26,7 @@ export function SpotlightClient() {
             </div>
             <div className={"w-3/4 flex justify-center"}>
                 <div className={"flex flex-col justify-around h-[30dvh]"}>
+                    <Link href="/sign-up">
                     <ShimmerButton className="shadow-2xl group">
                             <span
                                 className="flex items-center space-x-2 whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white lg:text-lg">
@@ -32,7 +34,7 @@ export function SpotlightClient() {
                                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform"/>
                             </span>
                     </ShimmerButton>
-
+                    </Link>
                     <button
                         className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full flex items-center space-x-2 transition-all duration-300 group">
                         <Play className="h-5 w-5 text-white group-hover:scale-110 transition-transform"/>

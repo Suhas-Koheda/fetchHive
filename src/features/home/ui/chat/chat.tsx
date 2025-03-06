@@ -26,6 +26,7 @@ import {
 import { MessageSquare, Plus, Settings, User } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input"
+import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button"
 
 export default function ChatPage() {
   // Use client-side only rendering to prevent hydration mismatch
@@ -152,8 +153,9 @@ export default function ChatPage() {
                   onChange={handleChange}
                   onSubmit={onSubmit}
                 />
-                <div className="mb-4 flex items-center justify-center text-white">
-                  <div className="flex h-16 w-full rounded-b-xl bg-[#282828] px-4 pt-4 font-bold text-[#6687ae]">
+                <div className="mb-4 w-full flex items-center justify-between text-white">
+                  <div className="h-12 p-12 w-full rounded-b-xl bg-[#282828] font-bold items-center flex justify-between px-10 text-[#6687ae]">
+                    <div className="flex items-center">
                     Choose Model
                     <Select>
                       <SelectTrigger className="mx-4 w-fit">
@@ -167,15 +169,11 @@ export default function ChatPage() {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    </div>
+                    <InteractiveHoverButton className="w-fit">Generate API</InteractiveHoverButton>
                   </div>
                 </div>
-                <button
-                  onClick={handleGenerateSchema}
-                  className="mb-4 cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg"
-                >
-                  {generateSchemaMutation.isPending ? "Generating..." : "Generate Schema"}
-                </button>
-
+                
                 {generateSchemaMutation.error && (
                   <div className="mb-4 text-red-500">{generateSchemaMutation.error.message}</div>
                 )}

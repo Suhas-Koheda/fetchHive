@@ -24,7 +24,7 @@ export default function Navbar() {
     return (
       <div className="flex w-full flex-col">
         <nav
-          className={`fixed left-0 right-0 top-0 z-50 ${isScrolled ? "bg-[#030617]/80 shadow-lg backdrop-blur-md" : "bg-[#030617]"} transition-all duration-300 ease-in-out`}
+          className={`fixed left-0 right-0 top-0 z-50 ${true ? "bg-[#030617]/80 shadow-lg backdrop-blur-md" : "bg-[#030617]"} transition-all duration-300 ease-in-out`}
         >
           <div className="container mx-auto flex items-center justify-between px-4 py-5">
             <motion.div
@@ -115,7 +115,7 @@ export default function Navbar() {
         </nav>
 
         {/* Added the marquee outside the nav but still fixed at the top */}
-        <div className="fixed left-0 right-0 top-[70px] z-40 w-full bg-[#030617]">
+        <div className="fixed left-0 right-0 top-[75px] z-40 w-full bg-[#030617]">
           <Marquee
             pauseOnHover={true}
             className="w-full py-1 font-medium text-white"

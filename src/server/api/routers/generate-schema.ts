@@ -1,14 +1,9 @@
 import { TRPCError } from "@trpc/server"
 import { z } from "zod"
 import { generateText } from "ai"
-import { createDeepSeek } from "@ai-sdk/deepseek"
+import { google } from '@ai-sdk/google';
 
 import { publicProcedure } from "@/server/api/trpc"
-import { env } from "@/env"
-
-const deepseek = createDeepSeek({
-    apiKey: env.DEEPSEEK_API_KEY,
-})
 
 export const generateJsonSchema = publicProcedure
     .input(
@@ -35,12 +30,13 @@ export const generateJsonSchema = publicProcedure
 
             Data Description: ${input.query}`
 
-            // Using the Vercel AI SDK with DeepSeek's model
+            // Using the Vercel AI SDK with Google's model
             const { text } = await generateText({
-                model: deepseek('deepseek-chat'),
+                model: google('gemini-1.5-flash'),
                 prompt: prompt,
                 temperature: 0.2, // Lower temperature for more deterministic output
-                maxTokens: 1000
+                maxTokens: 1000,
+
             })
 
             if (!text) {

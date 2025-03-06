@@ -20,7 +20,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/deepseek": "^0.1.13",
+    "@ai-sdk/google": "^1.1.20",
     "@chakra-ui/react": "^3.9.0",
     "@mendable/firecrawl-js": "^1.19.0",
     "@radix-ui/react-checkbox": "^1.1.4",

@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import Link, { LinkProps } from "next/link";
+import Link, { type LinkProps } from "next/link";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
@@ -42,8 +42,8 @@ export const SidebarProvider = ({
 }) => {
   const [openState, setOpenState] = useState(false);
 
-  const open = openProp !== undefined ? openProp : openState;
-  const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
+  const open = openProp ?? openState;
+  const setOpen = setOpenProp ?? setOpenState;
 
   return (
     <SidebarContext.Provider value={{ open, setOpen, animate: animate }}>

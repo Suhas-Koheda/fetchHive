@@ -30,7 +30,7 @@ export default function ChatPage() {
     generateSchemaMutation.mutate({ query });
   };
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
   

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -70,9 +71,9 @@ export function PlaceholdersAndVanishInput({
     const newData: any[] = [];
 
     for (let t = 0; t < 800; t++) {
-      let i = 4 * t * 800;
+      const i = 4 * t * 800;
       for (let n = 0; n < 800; n++) {
-        let e = i + 4 * n;
+        const e = i + 4 * n;
         if (
           pixelData[e] !== 0 &&
           pixelData[e + 1] !== 0 &&
@@ -105,11 +106,10 @@ export function PlaceholdersAndVanishInput({
   }, [value, draw]);
 
   const animate = (start: number) => {
-    const animateFrame = (pos: number = 0) => {
+    const animateFrame = (pos = 0) => {
       requestAnimationFrame(() => {
         const newArr = [];
-        for (let i = 0; i < newDataRef.current.length; i++) {
-          const current = newDataRef.current[i];
+        for (const current of newDataRef.current) {
           if (current.x < pos) {
             newArr.push(current);
           } else {
@@ -159,7 +159,7 @@ export function PlaceholdersAndVanishInput({
     setAnimating(true);
     draw();
 
-    const value = inputRef.current?.value || "";
+    const value = inputRef.current?.value ?? "";
     if (value && inputRef.current) {
       const maxX = newDataRef.current.reduce(
         (prev, current) => (current.x > prev ? current.x : prev),
@@ -172,7 +172,7 @@ export function PlaceholdersAndVanishInput({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     vanishAndSubmit();
-    onSubmit && onSubmit(e);
+    if (onSubmit) onSubmit(e);
   };
   return (
     <form
@@ -193,7 +193,7 @@ export function PlaceholdersAndVanishInput({
         onChange={(e) => {
           if (!animating) {
             setValue(e.target.value);
-            onChange && onChange(e);
+            if (onChange) onChange(e);
           }
         }}
         onKeyDown={handleKeyDown}

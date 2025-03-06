@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, createTRPCRouter } from "@/server/api/trpc";
+import { protectedProcedure, createTRPCRouter } from "@/server/api/trpc";
 import { Redis } from "@upstash/redis";
 import { env } from "@/env";
 import { TRPCError } from "@trpc/server";
@@ -10,7 +10,7 @@ const redis = new Redis({
 });
 
 export const chatRouter = createTRPCRouter({
-  list: publicProcedure
+  list: protectedProcedure
     .input(
       z.object({
         userId: z.string().min(1, "User ID is required"),
@@ -54,7 +54,7 @@ export const chatRouter = createTRPCRouter({
     }),
 
   // GET equivalent - get a single route
-  get: publicProcedure
+  get: protectedProcedure
     .input(
       z.object({
         userId: z.string().min(1, "User ID is required"),

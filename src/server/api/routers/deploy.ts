@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { Redis } from "@upstash/redis";
 
-import { publicProcedure } from "@/server/api/trpc";
+import { protectedProcedure } from "@/server/api/trpc";
 import { env } from "@/env";
 
 // Initialize Redis client
@@ -11,26 +11,7 @@ const redis = new Redis({
   token: env.UPSTASH_REDIS_REST_TOKEN || "",
 });
 
-// Validation schema
-const deployRequestSchema = z.object({
-  key: z.string().min(1, "Key is required"),
-  data: z.object({
-    data: z.record(z.any()),
-    metadata: z.object({
-      query: z.string(),
-      schema: z.object({
-        type: z.string(),
-        properties: z.record(z.any()),
-        required: z.array(z.string()).optional(),
-      }),
-      sources: z.array(z.string()),
-      lastUpdated: z.string(),
-    }),
-  }),
-  route: z.string().min(1, "Route is required"),
-});
-
-export const deployRouter = publicProcedure
+export const deployRouter = protectedProcedure
   .input(
     z.object({
       userId: z.string().min(1, "User ID is required"),

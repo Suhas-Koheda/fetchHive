@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { publicProcedure } from '@/server/api/trpc';
+import { protectedProcedure } from '@/server/api/trpc';
 import { env } from '@/env';
 
 // Define a type for the Serper API search result
@@ -20,7 +20,7 @@ type SerperApiResponse = {
     };
 };
 
-export const searchWeb = publicProcedure
+export const searchWeb = protectedProcedure
     .input(
         z.object({
             query: z.string().min(1, "Query cannot be empty"),

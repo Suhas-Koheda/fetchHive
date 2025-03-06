@@ -3,9 +3,9 @@ import { z } from "zod"
 import { generateText } from "ai"
 import { google } from '@ai-sdk/google';
 
-import { publicProcedure } from "@/server/api/trpc"
+import { protectedProcedure } from "@/server/api/trpc"
 
-export const generateJsonSchema = publicProcedure
+export const generateJsonSchema = protectedProcedure
     .input(
         z.object({
             query: z.string().min(1, "Description cannot be empty"),

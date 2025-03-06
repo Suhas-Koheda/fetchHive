@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { publicProcedure } from '@/server/api/trpc';
+import { protectedProcedure } from '@/server/api/trpc';
 import FirecrawlApp from "@mendable/firecrawl-js";
 
 type ExtractedDataValue = string | number | boolean | null | ExtractedDataObject | ExtractedDataArray;
@@ -46,7 +46,7 @@ const app = new FirecrawlApp({
     apiKey: process.env.FIRECRAWL_API_KEY ?? '' 
 });
 
-export const extractWebData = publicProcedure
+export const extractWebData = protectedProcedure
     .input(extractRequestSchema)
     .output(responseSchema)
     .mutation(async ({ input }) => {

@@ -77,12 +77,63 @@ export const extractWebData = protectedProcedure
         });
       }
 
-      // Perform batch URL extraction
-      const scrapeResult: ScrapeResult = await app.extract(urls, {
-        prompt,
-        schema,
-        enableWebSearch,
-      });
+      // Validate that URLs are not too many (optional)
+      if (urls.length > 20) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Too many URLs requested at once. Please limit to 20 URLs per request.",
+        });
+      }
+
+      // Validate each URL
+      for (const url of urls) {
+        try {
+          new URL(url); // This will throw if URL is invalid
+        } catch (e) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Invalid URL provided: ${url}`,
+          });
+        }
+      }
+
+      // Add more specific error handling around the extract call
+      let scrapeResult: ScrapeResult;
+      try {
+        // Perform batch URL extraction with timeout mechanism
+        const extractPromise = app.extract(urls, {
+          prompt,
+          schema,
+          enableWebSearch,
+        });
+        
+        // You might want to add a timeout if the library doesn't provide one
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => {
+            reject(new Error("Extraction timed out after 120 seconds"));
+          }, 120000); // 2-minute timeout
+        });
+        
+        scrapeResult = await Promise.race([extractPromise, timeoutPromise]) as ScrapeResult;
+      } catch (extractError) {
+        console.error("Firecrawl extraction error:", extractError);
+        
+        // Check for specific error types
+        const errorMessage = extractError instanceof Error ? extractError.message : "Unknown error";
+        
+        if (errorMessage.includes("stream closed") || errorMessage.includes("network") || 
+            errorMessage.includes("timeout") || errorMessage.includes("connection")) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Connection to extraction service was interrupted. Please try again with fewer URLs or a simpler query.",
+          });
+        }
+        
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Extraction failed: ${errorMessage}`,
+        });
+      }
 
       // Check batch scrape success
       if (!scrapeResult.success) {
@@ -91,6 +142,9 @@ export const extractWebData = protectedProcedure
           message: scrapeResult.error ?? "Batch scraping failed",
         });
       }
+
+      // Log success for debugging
+      console.log("Extraction completed successfully");
 
       if (answerBoxData && scrapeResult.success) {
         return {

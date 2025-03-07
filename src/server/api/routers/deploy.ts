@@ -42,7 +42,9 @@ export const deployRouter = protectedProcedure
         .trim();
 
       // Check if route already exists for this user
-      const existingRoute = await redis.get(`api/results/${userId}/${cleanRoute}`);
+      const existingRoute = await redis.get(
+        `api/results/${userId}/${cleanRoute}`,
+      );
       if (existingRoute) {
         throw new TRPCError({
           code: "CONFLICT",
@@ -69,7 +71,10 @@ export const deployRouter = protectedProcedure
       };
 
       // Store the data in Redis with userId in the key
-      await redis.set(`api/results/${userId}/${cleanRoute}`, JSON.stringify(apiData));
+      await redis.set(
+        `api/results/${userId}/${cleanRoute}`,
+        JSON.stringify(apiData),
+      );
 
       const apiRoute = env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
       const fullUrl = `${apiRoute}/api/results/${userId}/${cleanRoute}`;

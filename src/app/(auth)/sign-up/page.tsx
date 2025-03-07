@@ -1,11 +1,11 @@
-import { SignUpForm } from '@/features/auth/components/sign-up-form'
+import { SignUpForm } from "@/features/auth/components/sign-up-form";
 
 const SignUp = () => {
-    return (
-        <div>
-            <SignUpForm />
-        </div>
-    )
-}
+  return (
+    <div>
+      <SignUpForm />
+    </div>
+  );
+};
 
-export default SignUp
+export default SignUp;

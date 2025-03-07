@@ -11,7 +11,7 @@ import { WorkflowDisplay } from "./WorkflowDisplay";
 import {
   SidebarTrigger,
   SidebarProvider,
-  Sidebar
+  Sidebar,
 } from "@/components/ui/sidebar";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ export default function ApiWorkflowPage({ userId }: ApiWorkflowPageProps) {
     handleNewChat,
     handleChange,
     handleSubmit,
-    resetWorkflow
+    resetWorkflow,
   } = useApiWorkflow(userId);
 
   const placeholders = [
@@ -61,73 +61,73 @@ export default function ApiWorkflowPage({ userId }: ApiWorkflowPageProps) {
   }
 
   return (
-      <SidebarProvider>
-        <div className="flex h-screen bg-[#16161d] overflow-hidden w-screen">
-          {/* Sidebar that will collapse on mobile */}
-          <Sidebar className="border-r border-gray-800">
-            <SidebarComponent
-                chats={chats}
-                isLoadingChats={isLoadingChats}
-                selectedChatId={selectedChatId}
-                handleSelectChat={handleSelectChat}
-                handleNewChat={handleNewChat}
-                userId={userId}
-            />
-          </Sidebar>
+    <SidebarProvider>
+      <div className="flex h-screen w-screen overflow-hidden bg-[#16161d]">
+        {/* Sidebar that will collapse on mobile */}
+        <Sidebar className="border-r border-gray-800">
+          <SidebarComponent
+            chats={chats}
+            isLoadingChats={isLoadingChats}
+            selectedChatId={selectedChatId}
+            handleSelectChat={handleSelectChat}
+            handleNewChat={handleNewChat}
+            userId={userId}
+          />
+        </Sidebar>
 
-          <main className="flex-1 flex flex-col overflow-hidden w-full">
-            {/* Mobile header with trigger */}
-            <div className="md:hidden flex items-center justify-between bg-[#16161d] p-4 border-b border-gray-800">
-              <SidebarTrigger>
-                <Button variant="ghost" size="icon" className="text-white">
-                  <Menu />
-                </Button>
-              </SidebarTrigger>
-
-              <span className="text-white font-bold text-xl">FetchHive</span>
-
-              <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white"
-                  onClick={handleNewChat}
-              >
-                <Plus />
+        <main className="flex w-full flex-1 flex-col overflow-hidden">
+          {/* Mobile header with trigger */}
+          <div className="flex items-center justify-between border-b border-gray-800 bg-[#16161d] p-4 md:hidden">
+            <SidebarTrigger>
+              <Button variant="ghost" size="icon" className="text-white">
+                <Menu />
               </Button>
-            </div>
+            </SidebarTrigger>
 
-            <AuroraBackground className="z-0 bg-black text-white flex-1 overflow-y-auto w-full">
-              {!chatStart ? (
-                  <WelcomeScreen
-                      handleSubmit={handleSubmit}
-                      handleChange={handleChange}
-                      placeholders={placeholders}
-                      model={model}
-                      setModel={setModel}
-                      isPending={generateSchemaMutation.isPending}
-                      workflowError={workflowError}
-                  />
-              ) : (
-                  <WorkflowDisplay
-                      currentStep={currentStep}
-                      setCurrentStep={setCurrentStep}
-                      workflowError={workflowError}
-                      schema={schema}
-                      searchResults={searchResults}
-                      extractedData={extractedData}
-                      deploymentData={deploymentData}
-                      generateSchemaMutation={generateSchemaMutation}
-                      searchMutation={searchMutation}
-                      extractMutation={extractMutation}
-                      deployMutation={deployMutation}
-                      userId={userId}
-                      query={query}
-                      resetWorkflow={resetWorkflow}
-                  />
-              )}
-            </AuroraBackground>
-          </main>
-        </div>
-      </SidebarProvider>
+            <span className="text-xl font-bold text-white">FetchHive</span>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white"
+              onClick={handleNewChat}
+            >
+              <Plus />
+            </Button>
+          </div>
+
+          <AuroraBackground className="z-0 w-full flex-1 overflow-y-auto bg-black text-white">
+            {!chatStart ? (
+              <WelcomeScreen
+                handleSubmit={handleSubmit}
+                handleChange={handleChange}
+                placeholders={placeholders}
+                model={model}
+                setModel={setModel}
+                isPending={generateSchemaMutation.isPending}
+                workflowError={workflowError}
+              />
+            ) : (
+              <WorkflowDisplay
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
+                workflowError={workflowError}
+                schema={schema}
+                searchResults={searchResults}
+                extractedData={extractedData}
+                deploymentData={deploymentData}
+                generateSchemaMutation={generateSchemaMutation}
+                searchMutation={searchMutation}
+                extractMutation={extractMutation}
+                deployMutation={deployMutation}
+                userId={userId}
+                query={query}
+                resetWorkflow={resetWorkflow}
+              />
+            )}
+          </AuroraBackground>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }

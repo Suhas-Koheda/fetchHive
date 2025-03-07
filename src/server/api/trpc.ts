@@ -138,4 +138,6 @@ const isAuthed = t.middleware(async ({ ctx, next }) => {
 /**
  * Protected procedure - only authenticated users can access this
  */
-export const protectedProcedure = t.procedure.use(timingMiddleware).use(isAuthed);
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(isAuthed);

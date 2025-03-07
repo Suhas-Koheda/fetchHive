@@ -1,7 +1,13 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
-import { pgTable, text, timestamp, boolean, index, pgTableCreator } from "drizzle-orm/pg-core";
-
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  index,
+  pgTableCreator,
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -10,9 +16,6 @@ import { pgTable, text, timestamp, boolean, index, pgTableCreator } from "drizzl
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = pgTableCreator((name) => `FetchHive_${name}`);
-
-
-
 
 export const user = pgTable(
   "user",
@@ -25,11 +28,13 @@ export const user = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(new Date())
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).default(new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).default(
+      new Date(),
+    ),
   },
   (table) => ({
     emailIndex: index("email_idx").on(table.email),
-  })
+  }),
 );
 
 export const session = pgTable(
@@ -41,14 +46,18 @@ export const session = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(new Date())
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).default(new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).default(
+      new Date(),
+    ),
     ipAddress: text("ip_address"),
     userAgent: text("user_agent"),
-    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
   },
   (table) => ({
     tokenIndex: index("token_idx").on(table.token),
-  })
+  }),
 );
 
 export const account = pgTable(
@@ -57,22 +66,30 @@ export const account = pgTable(
     id: text("id").primaryKey(),
     accountId: text("account_id").notNull(),
     providerId: text("provider_id").notNull(),
-    userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     idToken: text("id_token"),
-    accessTokenExpiresAt: timestamp("access_token_expires_at", { withTimezone: true }),
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { withTimezone: true }),
+    accessTokenExpiresAt: timestamp("access_token_expires_at", {
+      withTimezone: true,
+    }),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+      withTimezone: true,
+    }),
     scope: text("scope"),
     password: text("password"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(new Date())
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).default(new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).default(
+      new Date(),
+    ),
   },
   (table) => ({
     providerIndex: index("provider_idx").on(table.providerId),
-  })
+  }),
 );
 
 export const verification = pgTable(
@@ -85,9 +102,11 @@ export const verification = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(new Date())
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).default(new Date()),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).default(
+      new Date(),
+    ),
   },
   (table) => ({
     identifierIndex: index("identifier_idx").on(table.identifier),
-  })
+  }),
 );

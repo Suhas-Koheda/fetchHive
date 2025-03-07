@@ -6,7 +6,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { InteractiveHoverButton } from "../magicui/interactive-hover-button";
 
-
 export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
@@ -23,10 +22,10 @@ export function PlaceholdersAndVanishInput({
   const startAnimation = useCallback(() => {
     intervalRef.current = setInterval(() => {
       setIsTransitioning(true);
-      
+
       setTimeout(() => {
         setCurrentPlaceholder((prev) => (prev + 1) % placeholders.length);
-        
+
         setTimeout(() => {
           setIsTransitioning(false);
         }, 400);
@@ -66,25 +65,25 @@ export function PlaceholdersAndVanishInput({
   return (
     <form
       className={cn(
-        "w-full flex relative max-w-3xl mx-auto text-white bg-[#282828] dark:bg-zinc-800 h-12 rounded-t-xl overflow-hidden shadow transition duration-200",
-        value && "bg-[#282828]"
+        "relative mx-auto flex h-12 w-full max-w-3xl overflow-hidden rounded-t-xl bg-[#282828] text-white shadow transition duration-200 dark:bg-zinc-800",
+        value && "bg-[#282828]",
       )}
       onSubmit={handleSubmit}
     >
       <div className="relative h-full">
         {value === "" && (
-          <div className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 pointer-events-none w-4/5 overflow-hidden h-6">
+          <div className="pointer-events-none absolute left-4 top-1/2 h-6 w-4/5 -translate-y-1/2 overflow-hidden sm:left-10">
             <AnimatePresence mode="sync">
               <motion.div
                 key={currentPlaceholder}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 0.7, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ 
+                transition={{
                   duration: 0.5,
                   ease: "easeInOut",
                 }}
-                className="text-sm sm:text-base absolute"
+                className="absolute text-sm sm:text-base"
               >
                 {placeholders[currentPlaceholder]}
               </motion.div>
@@ -100,7 +99,7 @@ export function PlaceholdersAndVanishInput({
           value={value}
           type="text"
           className={cn(
-            "w-full h-full relative text-sm sm:text-base z-50 border-none text-white bg-transparent rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20"
+            "relative z-50 h-full w-full rounded-full border-none bg-transparent pl-4 pr-20 text-sm text-white focus:outline-none focus:ring-0 sm:pl-10 sm:text-base",
           )}
         />
       </div>

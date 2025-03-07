@@ -34,18 +34,20 @@ export interface SearchResultProps {
 
 const SearchResultCard = ({ result }: { result: OrganicResult }) => {
   return (
-    <Card className="mb-4 bg-zinc-900 border-zinc-800 hover:border-zinc-700 transition-colors">
+    <Card className="mb-4 border-zinc-800 bg-zinc-900 transition-colors hover:border-zinc-700">
       <CardContent className="pt-4">
-        <a 
+        <a
           href={result.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 hover:text-blue-300 text-lg font-medium line-clamp-1"
+          className="line-clamp-1 text-lg font-medium text-blue-400 hover:text-blue-300"
         >
           {result.title}
         </a>
-        <p className="text-zinc-400 text-sm mt-1 line-clamp-1">{result.link}</p>
-        <p className="text-zinc-300 mt-2 text-sm line-clamp-2">{result.snippet}</p>
+        <p className="mt-1 line-clamp-1 text-sm text-zinc-400">{result.link}</p>
+        <p className="mt-2 line-clamp-2 text-sm text-zinc-300">
+          {result.snippet}
+        </p>
       </CardContent>
     </Card>
   );
@@ -53,9 +55,9 @@ const SearchResultCard = ({ result }: { result: OrganicResult }) => {
 
 const AnswerBoxCard = ({ answerBox }: { answerBox: AnswerBox }) => {
   return (
-    <Card className="mb-6 bg-zinc-800 border-zinc-700">
+    <Card className="mb-6 border-zinc-700 bg-zinc-800">
       <CardContent className="pt-4">
-        <h3 className="text-zinc-300 text-sm mb-2">{answerBox.title}</h3>
+        <h3 className="mb-2 text-sm text-zinc-300">{answerBox.title}</h3>
         <p className="text-2xl font-semibold text-white">{answerBox.answer}</p>
       </CardContent>
     </Card>
@@ -66,15 +68,18 @@ export const SearchResults = ({ data }: SearchResultProps) => {
   // Show error message if there is one
   if (!data.success || data.error) {
     return (
-      <div className="text-red-500 p-4">
+      <div className="p-4 text-red-500">
         {data.error ?? "Search was unsuccessful"}
       </div>
     );
   }
 
   // If no search results, show a message
-  if (!data.searchResults || (!data.searchResults.organic && !data.searchResults.answerBox)) {
-    return <div className="text-zinc-400 p-4">No results found</div>;
+  if (
+    !data.searchResults ||
+    (!data.searchResults.organic && !data.searchResults.answerBox)
+  ) {
+    return <div className="p-4 text-zinc-400">No results found</div>;
   }
 
   return (

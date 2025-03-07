@@ -14,12 +14,12 @@ export const chatRouter = createTRPCRouter({
     .input(
       z.object({
         userId: z.string().min(1, "User ID is required"),
-      })
+      }),
     )
     .query(async ({ input }) => {
       try {
         const { userId } = input;
-        
+
         // Get all keys matching the pattern for this user
         const keys = await redis.keys(`api/results/${userId}/*`);
         const endpoints = [];
@@ -28,8 +28,9 @@ export const chatRouter = createTRPCRouter({
           const apiData = await redis.get(key);
           if (apiData) {
             const endpoint = key.replace(`api/results/${userId}/`, "");
-            const parsedData = typeof apiData === "string" ? JSON.parse(apiData) : apiData;
-            
+            const parsedData =
+              typeof apiData === "string" ? JSON.parse(apiData) : apiData;
+
             endpoints.push({
               endpoint,
               name: endpoint,
@@ -59,22 +60,22 @@ export const chatRouter = createTRPCRouter({
       z.object({
         userId: z.string().min(1, "User ID is required"),
         endpoint: z.string().min(1, "Endpoint name is required"),
-      })
+      }),
     )
     .query(async ({ input }) => {
       try {
         const { userId, endpoint } = input;
-        
+
         // Get the API data from Redis
         const apiData = await redis.get(`api/results/${userId}/${endpoint}`);
-        
+
         if (!apiData) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "API endpoint not found",
           });
         }
-        
+
         return {
           success: true,
           data: typeof apiData === "string" ? JSON.parse(apiData) : apiData,
@@ -84,7 +85,7 @@ export const chatRouter = createTRPCRouter({
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         console.error("Error fetching endpoint:", error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

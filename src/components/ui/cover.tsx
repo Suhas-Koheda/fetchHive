@@ -24,7 +24,7 @@ export const Cover = ({
         const numberOfBeams = Math.floor(height / 10);
         const positions = Array.from(
           { length: numberOfBeams },
-          (_, i) => (i + 1) * (height / (numberOfBeams + 1))
+          (_, i) => (i + 1) * (height / (numberOfBeams + 1)),
         );
         setBeamPositions(positions);
       }
@@ -41,7 +41,7 @@ export const Cover = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       ref={ref}
-      className="bg-transparent relative hover:bg-[] group/cover inline-block dark:bg-neutral-900 bg-neutral-100 px-2 py-2 transition duration-200 rounded-sm"
+      className="group/cover relative inline-block rounded-sm bg-neutral-100 bg-transparent px-2 py-2 transition duration-200 hover:bg-[] dark:bg-neutral-900"
     >
       <AnimatePresence>
         {hovered && (
@@ -50,7 +50,7 @@ export const Cover = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ opacity: { duration: 0.2 } }}
-            className="h-full w-full overflow-hidden absolute inset-0"
+            className="absolute inset-0 h-full w-full overflow-hidden"
           >
             <motion.div
               animate={{ translateX: ["-50%", "0%"] }}
@@ -61,14 +61,14 @@ export const Cover = ({
                   repeat: Infinity,
                 },
               }}
-              className="w-[200%] h-full flex"
+              className="flex h-full w-[200%]"
             >
               <SparklesCore
                 background="transparent"
                 minSize={0.4}
                 maxSize={1}
                 particleDensity={500}
-                className="w-full h-full"
+                className="h-full w-full"
                 particleColor="#000000"
               />
               <SparklesCore
@@ -76,7 +76,7 @@ export const Cover = ({
                 minSize={0.4}
                 maxSize={1}
                 particleDensity={500}
-                className="w-full h-full"
+                className="h-full w-full"
                 particleColor="#000000"
               />
             </motion.div>
@@ -110,8 +110,8 @@ export const Cover = ({
           filter: { duration: 0.2 },
         }}
         className={cn(
-          "dark:text-white inline-block text-white relative z-20 group-hover/cover:text-white transition duration-200",
-          className
+          "relative z-20 inline-block text-white transition duration-200 group-hover/cover:text-white dark:text-white",
+          className,
         )}
       >
         {children}
@@ -158,7 +158,7 @@ export const Beam = ({
           initial={{ x1: "0%", x2: hovered ? "-10%" : "-5%", y1: 0, y2: 0 }}
           animate={{ x1: "110%", x2: hovered ? "100%" : "105%", y1: 0, y2: 0 }}
           transition={{
-            duration: hovered ? 0.5 : duration ?? 2,
+            duration: hovered ? 0.5 : (duration ?? 2),
             ease: "linear",
             repeat: Infinity,
             repeatDelay: hovered ? Math.random() * (2 - 1) + 1 : 1,
@@ -183,8 +183,8 @@ export const CircleIcon = ({
   return (
     <div
       className={cn(
-        `pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-neutral-600 dark:bg-white opacity-20 group-hover/cover:bg-white`,
-        className
+        `group pointer-events-none h-2 w-2 animate-pulse rounded-full bg-neutral-600 opacity-20 group-hover/cover:hidden group-hover/cover:bg-white group-hover/cover:opacity-100 dark:bg-white`,
+        className,
       )}
     ></div>
   );

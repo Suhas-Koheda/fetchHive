@@ -21,7 +21,7 @@ export function ModelSelector({ model, setModel }: ModelSelectorProps) {
       Choose Model
       <Select value={model} onValueChange={setModel}>
         <SelectTrigger className="mx-4 w-fit">
-          <SelectValue placeholder="Gemini"/>
+          <SelectValue placeholder="Gemini" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

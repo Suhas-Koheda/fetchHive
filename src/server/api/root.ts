@@ -12,11 +12,11 @@ import { deployRouter } from "@/server/api/routers/deploy";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-    extract: extractWebData,
-    search: searchWeb,
-    generateSchema: generateJsonSchema,
-    chat: chatRouter,
-    deploy: deployRouter
+  extract: extractWebData,
+  search: searchWeb,
+  generateSchema: generateJsonSchema,
+  chat: chatRouter,
+  deploy: deployRouter,
 });
 
 // export type definition of API

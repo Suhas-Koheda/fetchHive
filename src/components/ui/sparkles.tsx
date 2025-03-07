@@ -34,14 +34,13 @@ export const SparklesCore = (props: ParticlesProps) => {
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
     })
-        .then(() => {
-          setInit(true);
-        })
-        .catch((error) => {
-          console.error("Particles init failed", error);
-        });
+      .then(() => {
+        setInit(true);
+      })
+      .catch((error) => {
+        console.error("Particles init failed", error);
+      });
   }, []);
-
 
   const controls = useAnimation();
 
@@ -57,33 +56,33 @@ export const SparklesCore = (props: ParticlesProps) => {
   const generatedId = useId();
 
   return (
-      <motion.div animate={controls} className={cn("opacity-0", className)}>
-        {init && (
-            <Particles
-                id={id ?? generatedId}
-                className={cn("h-full w-full")}
-                particlesLoaded={particlesLoaded}
-                options={{
-                  background: { color: { value: background ?? "#0d47a1" } },
-                  fullScreen: { enable: false, zIndex: 1 },
-                  fpsLimit: 120,
-                  interactivity: {
-                    events: {
-                      onClick: { enable: true, mode: "push" },
-                      resize: {
-                        enable: true,
-                      },
-                    },
-                  },
-                  particles: {
-                    color: { value: particleColor ?? "#ffffff" },
-                    move: { enable: true, speed: { min: 0.1, max: speed ?? 4 } },
-                    number: { value: particleDensity ?? 120 },
-                    size: { value: { min: minSize ?? 1, max: maxSize ?? 3 } },
-                  },
-                }}
-            />
-        )}
-      </motion.div>
+    <motion.div animate={controls} className={cn("opacity-0", className)}>
+      {init && (
+        <Particles
+          id={id ?? generatedId}
+          className={cn("h-full w-full")}
+          particlesLoaded={particlesLoaded}
+          options={{
+            background: { color: { value: background ?? "#0d47a1" } },
+            fullScreen: { enable: false, zIndex: 1 },
+            fpsLimit: 120,
+            interactivity: {
+              events: {
+                onClick: { enable: true, mode: "push" },
+                resize: {
+                  enable: true,
+                },
+              },
+            },
+            particles: {
+              color: { value: particleColor ?? "#ffffff" },
+              move: { enable: true, speed: { min: 0.1, max: speed ?? 4 } },
+              number: { value: particleDensity ?? 120 },
+              size: { value: { min: minSize ?? 1, max: maxSize ?? 3 } },
+            },
+          }}
+        />
+      )}
+    </motion.div>
   );
 };

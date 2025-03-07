@@ -32,28 +32,34 @@ export enum WorkflowStep {
   Search = "search",
   Extraction = "extraction",
   Deployment = "deployment",
-  Completed = "completed"
+  Completed = "completed",
 }
 
 export function useApiWorkflow(userId: string) {
   // Client-side rendering state
   const [isClient, setIsClient] = useState(false);
-  
+
   // Chat/session state
   const [chatStart, setChatStart] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isLoadingChats, setIsLoadingChats] = useState(true);
   const [chats, setChats] = useState<ChatItem[]>([]);
   const [model, setModel] = useState("gemini");
-  
+
   // Workflow state
-  const [currentStep, setCurrentStep] = useState<WorkflowStep>(WorkflowStep.Idle);
+  const [currentStep, setCurrentStep] = useState<WorkflowStep>(
+    WorkflowStep.Idle,
+  );
   const [query, setQuery] = useState("");
   const [schema, setSchema] = useState<SchemaResult["schema"] | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResult | null>(null);
-  const [extractedData, setExtractedData] = useState<ExtractResult | null>(null);
-  const [deploymentData, setDeploymentData] = useState<DeployResult | null>(null);
-  
+  const [extractedData, setExtractedData] = useState<ExtractResult | null>(
+    null,
+  );
+  const [deploymentData, setDeploymentData] = useState<DeployResult | null>(
+    null,
+  );
+
   // Error state
   const [workflowError, setWorkflowError] = useState<string | null>(null);
 
@@ -71,7 +77,7 @@ export function useApiWorkflow(userId: string) {
       refetchOnMount: false,
       staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
       gcTime: 10 * 60 * 1000, // Keep data in cache for 10 minutes
-    }
+    },
   );
 
   // Handle the result with a useEffect
@@ -79,24 +85,26 @@ export function useApiWorkflow(userId: string) {
     // Handle successful data fetch
     if (chatListQuery.data) {
       if (chatListQuery.data.success && chatListQuery.data.endpoints) {
-        const formattedChats: ChatItem[] = chatListQuery.data.endpoints.map((endpoint, index) => ({
-          id: `${index}-${endpoint.endpoint}`,
-          endpoint: endpoint.endpoint,
-          name: endpoint.name,
-          query: endpoint.query,
-          lastUpdated: endpoint.lastUpdated,
-          url: endpoint.url
-        }));
+        const formattedChats: ChatItem[] = chatListQuery.data.endpoints.map(
+          (endpoint, index) => ({
+            id: `${index}-${endpoint.endpoint}`,
+            endpoint: endpoint.endpoint,
+            name: endpoint.name,
+            query: endpoint.query,
+            lastUpdated: endpoint.lastUpdated,
+            url: endpoint.url,
+          }),
+        );
         setChats(formattedChats);
       } else {
         // Handle case where data exists but doesn't have expected structure
         setChats([]);
       }
     }
-    
+
     // Update loading state based on query status
     setIsLoadingChats(chatListQuery.isLoading);
-    
+
     // Handle error state
     if (chatListQuery.error) {
       console.error("Error fetching chats:", chatListQuery.error);
@@ -115,7 +123,7 @@ export function useApiWorkflow(userId: string) {
       console.error("Extraction error:", error);
       setWorkflowError(`Extraction failed: ${error.message}`);
       setCurrentStep(WorkflowStep.Idle);
-    }
+    },
   });
 
   // Step 2: Search mutation
@@ -124,28 +132,30 @@ export function useApiWorkflow(userId: string) {
       console.log("Search results:", data);
       setSearchResults(data);
       setCurrentStep(WorkflowStep.Search);
-      
+
       // If we have a schema and search results, perform extraction
       if (schema && data.searchResults?.organic) {
         // Get URLs from search results
         const urls = data.searchResults.organic
-          .map(result => result.link)
-          .filter(link => link && link.length > 0)
+          .map((result) => result.link)
+          .filter((link) => link && link.length > 0)
           .slice(0, 5); // Limit to the first 5 URLs
 
         const answerBoxData = data.searchResults?.answerBox;
-        
+
         if (urls.length > 0) {
           try {
             setCurrentStep(WorkflowStep.Extraction);
-            const schemaRequest = JSON.parse(JSON.stringify(schema, null, 2)) as JsonSchema;
-            
+            const schemaRequest = JSON.parse(
+              JSON.stringify(schema, null, 2),
+            ) as JsonSchema;
+
             // Call the extract mutation with the URLs, query, and schema
             extractMutation.mutate({
               urls,
               prompt: query,
               schema: schemaRequest,
-              answerBoxData
+              answerBoxData,
             });
           } catch (error) {
             console.error("Failed to convert schema or extract data:", error);
@@ -160,7 +170,7 @@ export function useApiWorkflow(userId: string) {
       console.error("Search mutation error:", error);
       setWorkflowError(`Search failed: ${error.message}`);
       setCurrentStep(WorkflowStep.Idle);
-    }
+    },
   });
 
   // Step 1: Schema generation mutation
@@ -170,11 +180,11 @@ export function useApiWorkflow(userId: string) {
       console.log("Generated schema:", data.schema);
       setSchema(data.schema);
       setCurrentStep(WorkflowStep.SchemaGeneration);
-      
+
       // Automatically trigger search after a short delay
       setTimeout(() => {
         searchMutation.mutate({
-          query
+          query,
         });
       }, 1500);
     },
@@ -182,7 +192,7 @@ export function useApiWorkflow(userId: string) {
       console.error("Schema generation error:", error);
       setWorkflowError(`Schema generation failed: ${error.message}`);
       setCurrentStep(WorkflowStep.Idle);
-    }
+    },
   });
 
   // Step 4: Deploy API mutation
@@ -190,21 +200,21 @@ export function useApiWorkflow(userId: string) {
     onSuccess: (data) => {
       console.log("Deployment successful:", data);
       setDeploymentData(data);
-      
+
       // Add a delay to ensure the Deployment step is visible before completing
       setTimeout(() => {
         setCurrentStep(WorkflowStep.Completed);
       }, 1500);
-      
+
       // Refresh chat list after successful deployment
-      void chatListQuery.refetch().catch(error => {
+      void chatListQuery.refetch().catch((error) => {
         console.error("Error refetching chat list:", error);
       });
     },
     onError: (error) => {
       console.error("Deployment error:", error);
       setWorkflowError(`Deployment failed: ${error.message}`);
-    }
+    },
   });
 
   const handleSelectChat = (id: string) => {
@@ -282,6 +292,6 @@ export function useApiWorkflow(userId: string) {
     handleNewChat,
     handleChange,
     handleSubmit,
-    resetWorkflow
+    resetWorkflow,
   };
 }

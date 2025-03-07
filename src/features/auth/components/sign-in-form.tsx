@@ -26,7 +26,7 @@ export const LogInForm = () => {
     <BackgroundLines>
     <div className="grid dark bg-black place-items-center h-[100vh]">
       <Navbar />
-      <Card className="rounded-md rounded-t-none max-w-md">
+      <Card className="z-50 rounded-md rounded-t-none max-w-md">
       <CardHeader>
         <CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
         <CardDescription className="text-xs md:text-sm">

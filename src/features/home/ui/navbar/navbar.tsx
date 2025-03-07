@@ -79,7 +79,10 @@ export default function Navbar() {
 
             <div className="flex items-center space-x-4">
               {userData ? (
-                <ShimmerButton className="rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2 shadow-lg">
+                <ShimmerButton 
+                  onClick={handleLogout}
+                  className="rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2 shadow-lg"
+                >
                   <span className="text-sm font-medium text-white">
                     Log-Out
                   </span>

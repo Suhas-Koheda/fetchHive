@@ -10,7 +10,7 @@ export function CompareComponent() {
       </h2>
       <Compare
         firstImage="https://us1.discourse-cdn.com/openai1/original/4X/7/5/c/75c39c30b04e2ae451cdc52e1c002c592442e6b8.png"
-        secondImage="https://media.geeksforgeeks.org/wp-content/uploads/20240229152843/Screenshot-2024-02-29-152809.png"
+        secondImage="https://i.ibb.co/qMScfcfC/Screenshot-from-2025-03-07-08-25-29.png"
         firstImageClassName="object-cover object-left-top"
         secondImageClassname="object-cover object-left-top"
         className="h-[250px] w-[300px] md:h-[500px] md:w-[500px]"

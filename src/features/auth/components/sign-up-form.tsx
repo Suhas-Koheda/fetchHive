@@ -118,6 +118,7 @@ export const SignUpForm = () => {
 								onChange={(e) => setPasswordConfirmation(e.target.value)}
 								autoComplete="new-password"
 								placeholder="Confirm Password"
+								type="password"
 							/>
 						</div>
 						<Button

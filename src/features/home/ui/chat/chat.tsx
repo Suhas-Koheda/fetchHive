@@ -108,10 +108,20 @@ export default function ApiWorkflowPage({ userId }: {
   ];
 
   // Fetch chat list
-  const chatListQuery = api.chat.list.useQuery({ userId });
+  const chatListQuery = api.chat.list.useQuery(
+    { userId },
+    {
+      // Only fetch on initial load and when explicitly requested
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+      gcTime: 10 * 60 * 1000, // Keep data in cache for 10 minutes
+    }
+  );
 
   // Handle the result with a useEffect
   useEffect(() => {
+    // Handle successful data fetch
     if (chatListQuery.data) {
       if (chatListQuery.data.success && chatListQuery.data.endpoints) {
         const formattedChats: ChatItem[] = chatListQuery.data.endpoints.map((endpoint, index) => ({
@@ -123,15 +133,21 @@ export default function ApiWorkflowPage({ userId }: {
           url: endpoint.url
         }));
         setChats(formattedChats);
+      } else {
+        // Handle case where data exists but doesn't have expected structure
+        setChats([]);
       }
-      setIsLoadingChats(false);
     }
     
+    // Update loading state based on query status
+    setIsLoadingChats(chatListQuery.isLoading);
+    
+    // Handle error state
     if (chatListQuery.error) {
       console.error("Error fetching chats:", chatListQuery.error);
-      setIsLoadingChats(false);
+      setChats([]);
     }
-  }, [chatListQuery.data, chatListQuery.error]);
+  }, [chatListQuery.data, chatListQuery.error, chatListQuery.isLoading]);
 
   // Set isClient to true after component mounts
   useEffect(() => {
@@ -299,7 +315,11 @@ export default function ApiWorkflowPage({ userId }: {
       <div className="flex h-screen bg-[#16161d] overflow-hidden w-screen">
         <Sidebar>
           <SidebarHeader>
-          <InteractiveHoverButton className="text-white"><Link href={"/"}>FetchHive</Link></InteractiveHoverButton>
+          <Link href={"/"}>
+            <span className="text-white text-center font-bold text-2xl py-4 px-2">
+              FetchHive
+            </span>
+          </Link>
             <SidebarMenuButton 
               size="lg" 
               onClick={handleNewChat}
@@ -324,21 +344,23 @@ export default function ApiWorkflowPage({ userId }: {
               ) : (
                 chats.map((chat) => (
                   <SidebarMenuItem key={chat.id} className="px-2">
-                    <SidebarMenuButton
-                      isActive={selectedChatId === chat.id}
-                      onClick={() => handleSelectChat(chat.id)}
-                      className={`w-full justify-start px-4 py-3 h-16 transition-all duration-300 ${
-                        selectedChatId === chat.id 
-                          ? "bg-gray-700" 
-                          : "hover:bg-white hover:scale-[1.02]"
-                      }`}
-                    >
-                      <MessageSquare size={16} className="transition-transform duration-300 group-hover:scale-110 mr-2 -ml-1" />
-                      <div className="flex flex-1 flex-col overflow-hidden overflow-y-visible justify-around h-full">
-                        <span className="truncate">{chat.name}</span>
-                        <span className="text-xs text-gray-400">{formatDate(chat.lastUpdated)}</span>
-                      </div>
-                    </SidebarMenuButton>
+                    <a target="_blank" href={`/api/results/${userId}/${chat.name}`}>
+                      <SidebarMenuButton
+                        isActive={selectedChatId === chat.id}
+                        onClick={() => handleSelectChat(chat.id)}
+                        className={`w-full justify-start px-4 py-3 h-16 transition-all duration-300 ${
+                          selectedChatId === chat.id 
+                            ? "bg-gray-700" 
+                            : "hover:bg-white hover:scale-[1.02]"
+                        }`}
+                      >
+                        <MessageSquare size={16} className="transition-transform duration-300 group-hover:scale-110 mr-2 -ml-1" />
+                        <div className="flex flex-1 flex-col overflow-hidden overflow-y-visible justify-around h-full">
+                          <span className="truncate">{chat.name}</span>
+                          <span className="text-xs text-gray-400">{formatDate(chat.lastUpdated)}</span>
+                        </div>
+                      </SidebarMenuButton>
+                    </a>
                   </SidebarMenuItem>
                 ))
               )}

@@ -93,7 +93,7 @@ export const Extraction = ({ data }: ExtractionProps) => {
                 {answerBox.description || formatValue(Object.entries(answerBox)[1]?.[1])}
               </div>
             </div>
-            <Badge variant="outline" className="bg-gray-800">
+            <Badge variant="outline" className="bg-gray-800 text-white">
               <Info size={14} className="mr-1" /> Info
             </Badge>
           </div>
